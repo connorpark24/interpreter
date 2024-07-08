@@ -1,0 +1,14 @@
+
+Repl v0.1
+>>> Producing AST...
+Tokens:
+10
++
+5
+-
+2
+Parsing primary expression: 0
+Parsing primary expression: 0
+Parsing primary expression: 0
+Evaluating...
+13>>> 

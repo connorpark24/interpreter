@@ -1,11 +1,12 @@
 #include "Lexer.h"
+
 #include <iostream>
 
 const std::map<std::string, TokenType> keywords = {
     {"let", TokenType::Let},
 };
 
-Token token(std::string value = "", TokenType type)
+Token token(TokenType type, std::string value = "")
 {
     return {value, type};
 }
@@ -26,7 +27,7 @@ bool isSkippable(std::string str)
     return str == " " || str == "\n" || str == "\t";
 }
 
-std::vector<std::string> split(const std::string &sourceCode, char delimiter)
+std::vector<std::string> split(std::string sourceCode, char delimiter)
 {
     std::vector<std::string> result;
     std::string token;
@@ -52,22 +53,26 @@ std::vector<std::string> split(const std::string &sourceCode, char delimiter)
     return result;
 }
 
-std::vector<Token> tokenize(std::string sourceCode)
+std::deque<Token> tokenize(std::string sourceCode)
 {
-    std::vector<Token> tokens;
+    std::deque<Token> tokens;
     std::vector<std::string> src = split(sourceCode, ' ');
+    const size_t numTokens = src.size();
 
-    for (size_t i = 0; i < src.size(); i++)
+    std::cout << "Tokens:\n";
+
+    for (size_t i = 0; i < numTokens; i++)
     {
         std::string currToken = src[i];
+        std::cout << currToken << "\n";
 
         if (currToken[0] == '(')
         {
-            tokens.push_back(token(currToken, TokenType::OpenParen));
+            tokens.push_back(token(TokenType::OpenParen, currToken));
         }
         else if (currToken[0] == ')')
         {
-            tokens.push_back(token(currToken, TokenType::CloseParen));
+            tokens.push_back(token(TokenType::CloseParen, currToken));
         }
         else if (
             currToken[0] == '+' ||
@@ -76,26 +81,26 @@ std::vector<Token> tokenize(std::string sourceCode)
             currToken[0] == '/' ||
             currToken[0] == '%')
         {
-            tokens.push_back(token(currToken, TokenType::BinaryOperator));
+            tokens.push_back(token(TokenType::BinaryOperator, currToken));
         }
         else if (currToken[0] == '=')
         {
-            tokens.push_back(token(currToken, TokenType::Equals));
+            tokens.push_back(token(TokenType::Equals, currToken));
         }
         else if (isInt(currToken))
         {
-            tokens.push_back(token(currToken, TokenType::Number));
+            tokens.push_back(token(TokenType::Number, currToken));
         }
         else if (isAlpha(currToken))
         {
             const auto it = keywords.find(currToken);
             if (it != keywords.end())
             {
-                tokens.push_back(token(currToken, it->second));
+                tokens.push_back(token(it->second, currToken));
             }
             else
             {
-                tokens.push_back(token(currToken, TokenType::Identifier));
+                tokens.push_back(token(TokenType::Identifier, currToken));
             }
         }
         else if (isSkippable(currToken))
@@ -107,6 +112,7 @@ std::vector<Token> tokenize(std::string sourceCode)
         }
     }
 
-    tokens.push_back(token("EndOfFile", TokenType::EndOfFile));
+    tokens.push_back(token(TokenType::EndOfFile, "EndOfFile"));
+
     return tokens;
 }

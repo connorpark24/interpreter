@@ -1,4 +1,5 @@
 #include "Parser.h"
+#include "Lexer.h"
 
 bool Parser::not_eof()
 {
@@ -67,7 +68,10 @@ Expr *Parser::parse_multiplicative_expr()
 
 Expr *Parser::parse_primary_expr()
 {
+
     TokenType tokenType = at().type;
+
+    std::cout << "Parsing primary expression: " << (tokenType == TokenType::Let)  << "\n";
 
     switch (tokenType)
     {
@@ -88,15 +92,25 @@ Expr *Parser::parse_primary_expr()
         expect(TokenType::CloseParen, "Unexpected token found inside parenthesised expression.");
         return value;
     }
+    case TokenType::Equals:
+        break;
+    case TokenType::CloseParen:
+        break;
+    case TokenType::BinaryOperator:
+        break;
+    case TokenType::Let:
+        break;
+    case TokenType::EndOfFile:
+        break;
     default:
         std::cout << "Unexpected token found during parsing: " << at().value << "\n";
         return nullptr;
     }
 }
 
-Program *Parser::produceAST(const std::string &sourceCode)
+Program *Parser::produceAST(std::string sourceCode)
 {
-    tokens = std::deque<Token>(tokenize(sourceCode).begin(), tokenize(sourceCode).end());
+    tokens = tokenize(sourceCode);
     Program *program = new Program();
 
     while (not_eof())

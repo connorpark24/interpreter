@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <deque>
 
 // Define the TokenType enum
 enum class TokenType
@@ -27,10 +28,10 @@ struct Token
 };
 
 // Token utility functions
-Token token(std::string value, TokenType type);
+Token token(TokenType type, std::string value);
 bool isAlpha(std::string c);
 bool isInt(std::string str);
 bool isSkippable(std::string c);
-std::vector<Token> tokenize(const std::string &sourceCode);
+std::deque<Token> tokenize(std::string sourceCode);
 
 #endif // TOKEN_H

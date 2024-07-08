@@ -3,6 +3,7 @@
 
 #include "Lexer.h"
 #include "Ast.h"
+
 #include <vector>
 #include <deque>
 #include <string>
@@ -25,7 +26,7 @@ private:
     Expr *parse_primary_expr();
 
 public:
-    Program *produceAST(const std::string &sourceCode);
+    Program *produceAST(std::string sourceCode);
 };
 
 #endif // PARSER_H

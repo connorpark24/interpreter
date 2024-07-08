@@ -1,9 +1,9 @@
-#include "Parser.h"
-#include "Interpreter.h"
+#include "./frontend/Parser.h"
+#include "./runtime/Interpreter.h"
 
 #include <iostream>
 
-int main(int argc, char **argv)
+int main()
 {
     Parser parser;
 
@@ -35,5 +35,7 @@ int main(int argc, char **argv)
         default:
             std::cout << "unknown";
         }
+
+        std::cout << "\n";
     }
 }

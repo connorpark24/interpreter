@@ -1,7 +1,7 @@
 #ifndef INTERPRETER_H
 #define INTERPRETER_H
 
-#include "Ast.h"
+#include "../frontend/Ast.h"
 #include "Values.h"
 
 RuntimeVal *evaluate(Stmt *astNode);
