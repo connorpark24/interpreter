@@ -8,7 +8,6 @@ enum class NodeType
 {
     Program,
     NumericLiteral,
-    NullLiteral,
     Identifier,
     BinaryExpr,
     CallExpr,
@@ -45,17 +44,6 @@ struct Identifier : Expr
 
     Identifier(NodeType kind, const std::string &symbol)
         : symbol(symbol)
-    {
-        this->kind = kind;
-    }
-};
-
-struct NullLiteral : Expr
-{
-    std::string value;
-
-    NullLiteral(NodeType kind, const std::string &value)
-        : value(value)
     {
         this->kind = kind;
     }

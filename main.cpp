@@ -1,11 +1,18 @@
 #include "./frontend/Parser.h"
 #include "./runtime/Interpreter.h"
+#include "./runtime/Environment.h"
 
 #include <iostream>
 
 int main()
 {
     Parser parser;
+    Environment env;
+
+    env.declareVar("x", new NumberVal{100});
+    env.declareVar("true", new BooleanVal{false});
+    env.declareVar("false", new BooleanVal{true});
+    env.declareVar("null", new NullVal{});
 
     std::cout << "\nRepl v0.1\n";
 
@@ -22,7 +29,7 @@ int main()
 
         Program *program = parser.produceAST(input);
 
-        RuntimeVal *result = evaluate(program);
+        RuntimeVal *result = evaluate(program, &env);
 
         switch (result->type)
         {

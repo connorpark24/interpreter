@@ -9,9 +9,9 @@
 // Define the TokenType enum
 enum class TokenType
 {
-    Null,
     Number,
     Identifier,
+    String,
     Equals,
     OpenParen,
     CloseParen,

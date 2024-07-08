@@ -71,17 +71,11 @@ Expr *Parser::parse_primary_expr()
 
     TokenType tokenType = at().type;
 
-    std::cout << "Parsing primary expression: " << (tokenType == TokenType::Let)  << "\n";
-
     switch (tokenType)
     {
     case TokenType::Identifier:
         return new Identifier(NodeType::Identifier, eat().value);
-
-    case TokenType::Null:
-        eat();
-        return new NullLiteral(NodeType::NullLiteral, "null");
-
+        
     case TokenType::Number:
         return new NumericLiteral(NodeType::NumericLiteral, std::stod(eat().value));
 

@@ -15,17 +15,16 @@ RuntimeVal *Environment::declareVar(const std::string &name, RuntimeVal *value)
 
 RuntimeVal *Environment::assignVar(const std::string &varname, RuntimeVal *value)
 {
-    auto it = variables.find(varname);
-    if (it != variables.end())
-    {
-        it->second = value;
-        return value;
-    }
-    if (parent != nullptr)
-    {
-        return parent->assignVar(varname, value);
-    }
-    throw std::runtime_error("Variable not declared");
+    Environment *env = resolve(varname);
+    env->variables[varname] = value;
+
+    return value;
+}
+
+
+RuntimeVal * Environment::lookupVar (std::string varname) {
+    Environment * env = resolve(varname);
+    return env->variables[varname];
 }
 
 Environment *Environment::resolve(const std::string &varname)

@@ -59,12 +59,9 @@ std::deque<Token> tokenize(std::string sourceCode)
     std::vector<std::string> src = split(sourceCode, ' ');
     const size_t numTokens = src.size();
 
-    std::cout << "Tokens:\n";
-
     for (size_t i = 0; i < numTokens; i++)
     {
         std::string currToken = src[i];
-        std::cout << currToken << "\n";
 
         if (currToken[0] == '(')
         {

@@ -4,7 +4,8 @@
 enum class ValueType
 {
     Null,
-    Number
+    Number,
+    Boolean
 };
 
 struct RuntimeVal
@@ -28,6 +29,16 @@ struct NumberVal : RuntimeVal
     NumberVal(double val)
     {
         type = ValueType::Number;
+        value = val;
+    }
+};
+
+struct BooleanVal : RuntimeVal
+{
+    bool value;
+    BooleanVal(bool val = true)
+    {
+        type = ValueType::Boolean;
         value = val;
     }
 };

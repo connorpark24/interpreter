@@ -16,6 +16,7 @@ public:
     Environment(Environment *parentENV = nullptr);
 
     RuntimeVal *declareVar(const std::string &name, RuntimeVal *value);
+    RuntimeVal *lookupVar(std::string varname);
     RuntimeVal *assignVar(const std::string &varname, RuntimeVal *value);
     Environment *resolve(const std::string &varname);
 };
