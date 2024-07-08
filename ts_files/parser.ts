@@ -5,7 +5,8 @@ import {
   BinaryExpr,
   NumericLiteral,
   Identifier,
-} from "./ast.ts";
+  NullLiteral,
+} from "../ts_files/ast.ts";
 import { Token, TokenType, tokenize } from "./lexer.ts";
 
 export default class Parser {
@@ -100,6 +101,16 @@ export default class Parser {
     switch (tk) {
       case TokenType.Identifier:
         return { kind: "Identifier", symbol: this.eat().value } as Identifier;
+
+      case TokenType.Null:
+        this.eat();
+        return { kind: "NullLiteral", value: "null" } as NullLiteral;
+
+      case TokenType.Equals:
+      case TokenType.CloseParen:
+      case TokenType.BinaryOperator:
+      case TokenType.Let:
+      case TokenType.EOF:
       case TokenType.Number:
         return {
           kind: "NumericLiteral",
