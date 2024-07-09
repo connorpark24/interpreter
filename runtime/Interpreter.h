@@ -11,5 +11,6 @@ RuntimeVal *eval_binary_expr(BinaryExpr *binop, Environment *env);
 NumberVal *eval_numeric_binary_expr(NumberVal *lhs, NumberVal *rhs, const std::string &op);
 RuntimeVal *eval_identifier(Identifier *ident, Environment *env);
 RuntimeVal *eval_assignment(AssignmentExpr *node, Environment *env);
+RuntimeVal *eval_object_expr(ObjectLiteral *obj, Environment *env);
 
 #endif // INTERPRETER_H

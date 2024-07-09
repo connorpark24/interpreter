@@ -32,6 +32,7 @@ Token Parser::expect(TokenType type, const std::string &err)
 Program *Parser::produceAST(std::string sourceCode)
 {
     tokens = tokenize(sourceCode);
+
     Program *program = new Program();
 
     while (not_eof())
@@ -57,7 +58,6 @@ Stmt *Parser::parse_stmt()
 
 Stmt *Parser::parse_var_declaration()
 {
-
     const bool isConstant = eat().type == TokenType::Const;
     const std::string identifier = expect(TokenType::Identifier, "Expected identifier name following let | const keywords. ").value;
 
@@ -88,7 +88,7 @@ Expr *Parser::parse_expr()
 
 Expr *Parser::parse_assignment_expr()
 {
-    Expr *left = parse_additive_expr();
+    Expr *left = parse_object_expr();
 
     if (at().type == TokenType::Equals)
     {
@@ -100,6 +100,49 @@ Expr *Parser::parse_assignment_expr()
     return left;
 }
 
+Expr *Parser::parse_object_expr()
+{
+    if (at().type != TokenType::OpenBrace)
+    {
+        return parse_additive_expr();
+    }
+
+    eat();
+
+    std::vector<Property *> properties;
+
+    while (not_eof() && at().type != TokenType::CloseBrace)
+    {
+        std::string key = expect(TokenType::Identifier, "Expected identifier key in object literal.").value;
+
+        if (at().type == TokenType::Comma)
+        {
+            eat();
+            properties.push_back(new Property{key, nullptr});
+            continue;
+        }
+        else if (at().type == TokenType::CloseBrace)
+        {
+            properties.push_back(new Property{key, nullptr});
+            continue;
+        }
+
+        expect(TokenType::Colon, "Expected colon following key in object literal.");
+        Expr *value = parse_expr();
+
+        properties.push_back(new Property{key, value});
+
+        if (at().type != TokenType::CloseBrace)
+        {
+            expect(TokenType::Comma, "Expected comma following property in object literal.");
+        }
+    }
+
+    expect(TokenType::CloseBrace, "Expected closing brace following object literal.");
+
+    return new ObjectLiteral(properties);
+}
+
 Expr *Parser::parse_additive_expr()
 {
     Expr *left = parse_multiplicative_expr();
@@ -108,7 +151,7 @@ Expr *Parser::parse_additive_expr()
     {
         std::string op = eat().value;
         Expr *right = parse_multiplicative_expr();
-        left = new BinaryExpr(NodeType::BinaryExpr, left, right, op);
+        left = new BinaryExpr(left, right, op);
     }
 
     return left;
@@ -121,7 +164,7 @@ Expr *Parser::parse_multiplicative_expr()
     {
         std::string op = eat().value;
         Expr *right = parse_primary_expr();
-        left = new BinaryExpr(NodeType::BinaryExpr, left, right, op);
+        left = new BinaryExpr(left, right, op);
     }
 
     return left;
@@ -135,10 +178,10 @@ Expr *Parser::parse_primary_expr()
     switch (tokenType)
     {
     case TokenType::Identifier:
-        return new Identifier(NodeType::Identifier, eat().value);
+        return new Identifier(eat().value);
 
     case TokenType::Number:
-        return new NumericLiteral(NodeType::NumericLiteral, std::stod(eat().value));
+        return new NumericLiteral(std::stod(eat().value));
 
     case TokenType::OpenParen:
     {

@@ -9,16 +9,26 @@
 // Define the TokenType enum
 enum class TokenType
 {
+    // Literal Types
     Number,
     Identifier,
-    String,
+
+    // Operators
     Equals,
     OpenParen,
     CloseParen,
+    OpenBrace,
+    CloseBrace,
     BinaryOperator,
     Semicolon,
+    Comma,
+    Colon,
+
+    // Keywords
     Let,
     Const,
+
+    // Signal end of file
     EndOfFile,
 };
 

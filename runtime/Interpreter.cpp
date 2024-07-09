@@ -74,6 +74,20 @@ RuntimeVal *eval_var_declaration(VarDeclaration *declaration, Environment *env)
     return env->declareVar(declaration->identifier, val, declaration->constant);
 }
 
+RuntimeVal *eval_object_expr(ObjectLiteral *obj, Environment *env)
+{
+    ObjectVal *object = new ObjectVal();
+
+    for (auto &prop : obj->properties)
+    {
+        RuntimeVal *runtimeVal = prop->value ? evaluate(prop->value, env) : env->lookupVar(prop->key);
+
+        object->properties[prop->key] = runtimeVal;
+    }
+
+    return object;
+}
+
 RuntimeVal *evaluate(Stmt *astNode, Environment *env)
 {
     switch (astNode->kind)
@@ -85,6 +99,8 @@ RuntimeVal *evaluate(Stmt *astNode, Environment *env)
     }
     case NodeType::Identifier:
         return eval_identifier(static_cast<Identifier *>(astNode), env);
+    case NodeType::ObjectLiteral:
+        return eval_object_expr(static_cast<ObjectLiteral *>(astNode), env);
     case NodeType::AssignmentExpr:
         return eval_assignment(static_cast<AssignmentExpr *>(astNode), env);
     case NodeType::BinaryExpr:

@@ -1,11 +1,15 @@
 #ifndef VALUES_H
 #define VALUES_H
 
+#include <unordered_map>
+#include <string>
+
 enum class ValueType
 {
     Null,
     Number,
-    Boolean
+    Boolean,
+    Object
 };
 
 struct RuntimeVal
@@ -30,6 +34,16 @@ struct NumberVal : RuntimeVal
     {
         type = ValueType::Number;
         value = val;
+    }
+};
+
+struct ObjectVal : RuntimeVal
+{
+    std::unordered_map<std::string, RuntimeVal *> properties;
+
+    ObjectVal()
+    {
+        type = ValueType::Object;
     }
 };
 

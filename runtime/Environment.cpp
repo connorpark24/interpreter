@@ -1,6 +1,21 @@
 #include "Environment.h"
+#include <iostream>
 
-Environment::Environment(Environment *parentENV) : parent(parentENV) {}
+Environment createGlobalEnv()
+{
+    Environment env = new Environment();
+
+    env.declareVar("true", new BooleanVal(true), true);
+    env.declareVar("false", new BooleanVal(false), true);
+    env.declareVar("null", new NullVal(), true);
+
+    return env;
+}
+
+Environment::Environment(Environment *parentENV) : parent(parentENV)
+{
+    global = parentENV ? true : false;
+}
 
 RuntimeVal *Environment::declareVar(const std::string &varname, RuntimeVal *value, bool constant)
 {
@@ -48,7 +63,7 @@ Environment *Environment::resolve(const std::string &varname)
 
     if (parent == nullptr)
     {
-        throw std::runtime_error("Variable not found");
+        std::cerr << "Variable not found: " << varname << "\n";
     }
 
     return parent->resolve(varname);

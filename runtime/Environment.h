@@ -11,6 +11,7 @@ class Environment
 {
 private:
     Environment *parent;
+    bool global;
     std::unordered_map<std::string, RuntimeVal *> variables;
     std::unordered_set<std::string> constants;
 
@@ -22,5 +23,7 @@ public:
     RuntimeVal *assignVar(const std::string &varname, RuntimeVal *value);
     Environment *resolve(const std::string &varname);
 };
+
+Environment createGlobalEnv();
 
 #endif

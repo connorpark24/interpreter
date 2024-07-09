@@ -26,7 +26,7 @@ bool isInt(const char c)
 
 bool isSkippable(const char c)
 {
-    return c == ' ' || c == '\n' || c == '\t';
+    return c == ' ' || c == '\n' || c == '\t' || c == '\r';
 }
 
 std::deque<Token> tokenize(const std::string sourceCode)
@@ -38,7 +38,7 @@ std::deque<Token> tokenize(const std::string sourceCode)
     while (i < numTokens)
     {
         const char currToken = sourceCode[i];
-        
+
         if (currToken == '(')
         {
             tokens.push_back(token(TokenType::OpenParen, "("));
@@ -46,6 +46,14 @@ std::deque<Token> tokenize(const std::string sourceCode)
         else if (currToken == ')')
         {
             tokens.push_back(token(TokenType::CloseParen, ")"));
+        }
+        if (currToken == '{')
+        {
+            tokens.push_back(token(TokenType::OpenBrace, "{"));
+        }
+        else if (currToken == '}')
+        {
+            tokens.push_back(token(TokenType::CloseBrace, "}"));
         }
         else if (
             currToken == '+' ||
@@ -59,6 +67,14 @@ std::deque<Token> tokenize(const std::string sourceCode)
         else if (currToken == '=')
         {
             tokens.push_back(token(TokenType::Equals, "="));
+        }
+        else if (currToken == ':')
+        {
+            tokens.push_back(token(TokenType::Colon, ":"));
+        }
+        else if (currToken == ',')
+        {
+            tokens.push_back(token(TokenType::Comma, ","));
         }
         else if (currToken == ';')
         {
@@ -81,7 +97,7 @@ std::deque<Token> tokenize(const std::string sourceCode)
             while (i < numTokens && isAlpha(sourceCode[i]))
             {
                 ident += sourceCode[i];
-                i++; 
+                i++;
             }
             i--;
             auto it = keywords.find(ident);
@@ -101,7 +117,7 @@ std::deque<Token> tokenize(const std::string sourceCode)
         {
             std::cout << "Unrecognized character found in source: " << currToken << "\n";
         }
-        
+
         i++;
     }
 

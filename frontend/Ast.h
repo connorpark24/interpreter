@@ -9,13 +9,16 @@ enum class NodeType
     // Statements
     Program,
     VarDeclaration,
+
     // Expressions
-    NumericLiteral,
     AssignmentExpr,
+
+    // Literals
+    Property,
+    ObjectLiteral,
+    NumericLiteral,
     Identifier,
     BinaryExpr,
-    CallExpr,
-    UnaryExpr,
     FunctionDeclaration
 };
 
@@ -47,10 +50,10 @@ struct BinaryExpr : Expr
     Expr *right;
     std::string op;
 
-    BinaryExpr(NodeType kind, Expr *left, Expr *right, const std::string &op)
+    BinaryExpr(Expr *left, Expr *right, const std::string &op)
         : left(left), right(right), op(op)
     {
-        this->kind = kind;
+        this->kind = NodeType::BinaryExpr;
     }
 };
 
@@ -58,10 +61,10 @@ struct Identifier : Expr
 {
     std::string symbol;
 
-    Identifier(NodeType kind, const std::string &symbol)
+    Identifier(const std::string &symbol)
         : symbol(symbol)
     {
-        this->kind = kind;
+        this->kind = NodeType::Identifier;
     }
 };
 
@@ -69,10 +72,33 @@ struct NumericLiteral : Expr
 {
     double value;
 
-    NumericLiteral(NodeType kind, double value)
+    NumericLiteral(double value)
         : value(value)
     {
-        this->kind = kind;
+        this->kind = NodeType::NumericLiteral;
+    }
+};
+
+struct Property : Expr
+{
+    std::string key;
+    Expr *value;
+
+    Property(std::string key, Expr *value)
+        : key(key), value(value)
+    {
+        this->kind = NodeType::Property;
+    }
+};
+
+struct ObjectLiteral : Expr
+{
+    std::vector<Property *> properties;
+
+    ObjectLiteral(std::vector<Property *> properties)
+        : properties(properties)
+    {
+        this->kind = NodeType::ObjectLiteral;
     }
 };
 
