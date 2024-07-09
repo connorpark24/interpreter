@@ -57,6 +57,23 @@ RuntimeVal *eval_identifier(Identifier *ident, Environment *env)
     return val;
 }
 
+RuntimeVal *eval_assignment(AssignmentExpr *node, Environment *env)
+{
+    if (node->assignee->kind != NodeType::Identifier)
+    {
+        throw std::runtime_error("Left hand side of assignment must be an identifier");
+    }
+
+    std::string varname = static_cast<Identifier *>(node->assignee)->symbol;
+    return env->assignVar(varname, evaluate(node->value, env));
+}
+
+RuntimeVal *eval_var_declaration(VarDeclaration *declaration, Environment *env)
+{
+    RuntimeVal *val = declaration->value ? evaluate(declaration->value, env) : new NullVal();
+    return env->declareVar(declaration->identifier, val, declaration->constant);
+}
+
 RuntimeVal *evaluate(Stmt *astNode, Environment *env)
 {
     switch (astNode->kind)
@@ -68,10 +85,14 @@ RuntimeVal *evaluate(Stmt *astNode, Environment *env)
     }
     case NodeType::Identifier:
         return eval_identifier(static_cast<Identifier *>(astNode), env);
+    case NodeType::AssignmentExpr:
+        return eval_assignment(static_cast<AssignmentExpr *>(astNode), env);
     case NodeType::BinaryExpr:
         return eval_binary_expr(static_cast<BinaryExpr *>(astNode), env);
     case NodeType::Program:
         return eval_program(static_cast<Program *>(astNode), env);
+    case NodeType::VarDeclaration:
+        return eval_var_declaration(static_cast<VarDeclaration *>(astNode), env);
     default:
         std::cerr << "Unknown AST Node\n";
         exit(1);

@@ -1,103 +1,97 @@
 #include "Lexer.h"
 
 #include <iostream>
+#include <deque>
+#include <map>
+#include <string>
 
 const std::map<std::string, TokenType> keywords = {
     {"let", TokenType::Let},
-};
+    {"const", TokenType::Const}};
 
 Token token(TokenType type, std::string value = "")
 {
     return {value, type};
 }
 
-bool isAlpha(std::string src)
+bool isAlpha(const char c)
 {
-    return (src >= "a" && src <= "z") || (src >= "A" && src <= "Z");
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
 
-bool isInt(std::string str)
+bool isInt(const char c)
 {
-    char c = str[0];
     return c >= '0' && c <= '9';
 }
 
-bool isSkippable(std::string str)
+bool isSkippable(const char c)
 {
-    return str == " " || str == "\n" || str == "\t";
+    return c == ' ' || c == '\n' || c == '\t';
 }
 
-std::vector<std::string> split(std::string sourceCode, char delimiter)
-{
-    std::vector<std::string> result;
-    std::string token;
-    for (char c : sourceCode)
-    {
-        if (c == delimiter)
-        {
-            if (!token.empty())
-            {
-                result.push_back(token);
-                token.clear();
-            }
-        }
-        else
-        {
-            token += c;
-        }
-    }
-    if (!token.empty())
-    {
-        result.push_back(token);
-    }
-    return result;
-}
-
-std::deque<Token> tokenize(std::string sourceCode)
+std::deque<Token> tokenize(const std::string sourceCode)
 {
     std::deque<Token> tokens;
-    std::vector<std::string> src = split(sourceCode, ' ');
-    const size_t numTokens = src.size();
+    size_t i = 0;
+    const size_t numTokens = sourceCode.length();
 
-    for (size_t i = 0; i < numTokens; i++)
+    while (i < numTokens)
     {
-        std::string currToken = src[i];
-
-        if (currToken[0] == '(')
+        const char currToken = sourceCode[i];
+        
+        if (currToken == '(')
         {
-            tokens.push_back(token(TokenType::OpenParen, currToken));
+            tokens.push_back(token(TokenType::OpenParen, "("));
         }
-        else if (currToken[0] == ')')
+        else if (currToken == ')')
         {
-            tokens.push_back(token(TokenType::CloseParen, currToken));
+            tokens.push_back(token(TokenType::CloseParen, ")"));
         }
         else if (
-            currToken[0] == '+' ||
-            currToken[0] == '-' ||
-            currToken[0] == '*' ||
-            currToken[0] == '/' ||
-            currToken[0] == '%')
+            currToken == '+' ||
+            currToken == '-' ||
+            currToken == '*' ||
+            currToken == '/' ||
+            currToken == '%')
         {
-            tokens.push_back(token(TokenType::BinaryOperator, currToken));
+            tokens.push_back(token(TokenType::BinaryOperator, std::string(1, currToken)));
         }
-        else if (currToken[0] == '=')
+        else if (currToken == '=')
         {
-            tokens.push_back(token(TokenType::Equals, currToken));
+            tokens.push_back(token(TokenType::Equals, "="));
+        }
+        else if (currToken == ';')
+        {
+            tokens.push_back(token(TokenType::Semicolon, ";"));
         }
         else if (isInt(currToken))
         {
-            tokens.push_back(token(TokenType::Number, currToken));
+            std::string num;
+            while (i < numTokens && isInt(sourceCode[i]))
+            {
+                num += sourceCode[i];
+                i++;
+            }
+            i--;
+            tokens.push_back(token(TokenType::Number, num));
         }
         else if (isAlpha(currToken))
         {
-            const auto it = keywords.find(currToken);
+            std::string ident;
+            while (i < numTokens && isAlpha(sourceCode[i]))
+            {
+                ident += sourceCode[i];
+                i++; 
+            }
+            i--;
+            auto it = keywords.find(ident);
             if (it != keywords.end())
             {
-                tokens.push_back(token(it->second, currToken));
+                tokens.push_back(token(it->second, ident));
             }
             else
             {
-                tokens.push_back(token(TokenType::Identifier, currToken));
+                tokens.push_back(token(TokenType::Identifier, ident));
             }
         }
         else if (isSkippable(currToken))
@@ -105,8 +99,10 @@ std::deque<Token> tokenize(std::string sourceCode)
         }
         else
         {
-            std::cout << "Unrecognized character found in source : " << src[0] << "\n";
+            std::cout << "Unrecognized character found in source: " << currToken << "\n";
         }
+        
+        i++;
     }
 
     tokens.push_back(token(TokenType::EndOfFile, "EndOfFile"));

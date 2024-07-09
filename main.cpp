@@ -9,11 +9,6 @@ int main()
     Parser parser;
     Environment env;
 
-    env.declareVar("x", new NumberVal{100});
-    env.declareVar("true", new BooleanVal{false});
-    env.declareVar("false", new BooleanVal{true});
-    env.declareVar("null", new NullVal{});
-
     std::cout << "\nRepl v0.1\n";
 
     while (true)

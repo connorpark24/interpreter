@@ -6,8 +6,12 @@
 
 enum class NodeType
 {
+    // Statements
     Program,
+    VarDeclaration,
+    // Expressions
     NumericLiteral,
+    AssignmentExpr,
     Identifier,
     BinaryExpr,
     CallExpr,
@@ -23,6 +27,18 @@ struct Stmt
 
 struct Expr : Stmt
 {
+};
+
+struct AssignmentExpr : Expr
+{
+    Expr *assignee;
+    Expr *value;
+
+    AssignmentExpr(Expr *assignee, Expr *value)
+        : assignee(assignee), value(value)
+    {
+        this->kind = NodeType::AssignmentExpr;
+    }
 };
 
 struct BinaryExpr : Expr
@@ -67,6 +83,18 @@ struct Program : Stmt
     Program()
     {
         kind = NodeType::Program;
+    }
+};
+
+struct VarDeclaration : Stmt
+{
+    bool constant;
+    std::string identifier;
+    Expr *value;
+    VarDeclaration(bool constant, const std::string identifier, Expr *value)
+        : constant(constant), identifier(identifier), value(value)
+    {
+        kind = NodeType::VarDeclaration;
     }
 };
 

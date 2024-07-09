@@ -16,7 +16,9 @@ enum class TokenType
     OpenParen,
     CloseParen,
     BinaryOperator,
+    Semicolon,
     Let,
+    Const,
     EndOfFile,
 };
 
@@ -29,9 +31,9 @@ struct Token
 
 // Token utility functions
 Token token(TokenType type, std::string value);
-bool isAlpha(std::string c);
-bool isInt(std::string str);
-bool isSkippable(std::string c);
-std::deque<Token> tokenize(std::string sourceCode);
+bool isAlpha(const char c);
+bool isInt(const char str);
+bool isSkippable(const char c);
+std::deque<Token> tokenize(const std::string sourceCode);
 
 #endif // TOKEN_H

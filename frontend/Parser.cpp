@@ -24,19 +24,80 @@ Token Parser::expect(TokenType type, const std::string &err)
     tokens.pop_front();
     if (prev.type != type)
     {
-        std::cout << "Parser error: " << err << " - Expecting: " << static_cast<int>(type) << "\n";
+        std::cerr << "Parser error: " << err << " - Expecting: " << static_cast<int>(type) << "\n";
     }
     return prev;
 }
 
+Program *Parser::produceAST(std::string sourceCode)
+{
+    tokens = tokenize(sourceCode);
+    Program *program = new Program();
+
+    while (not_eof())
+    {
+        program->body.push_back(parse_stmt());
+    }
+
+    return program;
+}
+
 Stmt *Parser::parse_stmt()
 {
-    return parse_expr();
+    switch (at().type)
+    {
+    case TokenType::Let:
+
+    case TokenType::Const:
+        return parse_var_declaration();
+    default:
+        return parse_expr();
+    }
+}
+
+Stmt *Parser::parse_var_declaration()
+{
+
+    const bool isConstant = eat().type == TokenType::Const;
+    const std::string identifier = expect(TokenType::Identifier, "Expected identifier name following let | const keywords. ").value;
+
+    if (at().type == TokenType::Semicolon)
+    {
+        eat();
+        if (isConstant)
+        {
+            throw std::runtime_error("Must assign value to constant expression.");
+        }
+
+        return new VarDeclaration{false, identifier, nullptr};
+    }
+
+    expect(TokenType::Equals, "Expected equals sign following identifier name in variable declaration.");
+
+    VarDeclaration *declaration = new VarDeclaration{isConstant, identifier, parse_expr()};
+
+    expect(TokenType::Semicolon, "Expected semicolon following variable declaration.");
+
+    return declaration;
 }
 
 Expr *Parser::parse_expr()
 {
-    return parse_additive_expr();
+    return parse_assignment_expr();
+}
+
+Expr *Parser::parse_assignment_expr()
+{
+    Expr *left = parse_additive_expr();
+
+    if (at().type == TokenType::Equals)
+    {
+        eat();
+        Expr *value = parse_assignment_expr();
+        return new AssignmentExpr(left, value);
+    }
+
+    return left;
 }
 
 Expr *Parser::parse_additive_expr()
@@ -75,7 +136,7 @@ Expr *Parser::parse_primary_expr()
     {
     case TokenType::Identifier:
         return new Identifier(NodeType::Identifier, eat().value);
-        
+
     case TokenType::Number:
         return new NumericLiteral(NodeType::NumericLiteral, std::stod(eat().value));
 
@@ -100,17 +161,4 @@ Expr *Parser::parse_primary_expr()
         std::cout << "Unexpected token found during parsing: " << at().value << "\n";
         return nullptr;
     }
-}
-
-Program *Parser::produceAST(std::string sourceCode)
-{
-    tokens = tokenize(sourceCode);
-    Program *program = new Program();
-
-    while (not_eof())
-    {
-        program->body.push_back(parse_stmt());
-    }
-
-    return program;
 }

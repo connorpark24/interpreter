@@ -20,6 +20,8 @@ private:
     Token expect(TokenType type, const std::string &err);
 
     Stmt *parse_stmt();
+    Stmt *parse_var_declaration();
+    Expr *parse_assignment_expr();
     Expr *parse_expr();
     Expr *parse_additive_expr();
     Expr *parse_multiplicative_expr();
