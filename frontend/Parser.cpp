@@ -159,15 +159,96 @@ Expr *Parser::parse_additive_expr()
 
 Expr *Parser::parse_multiplicative_expr()
 {
-    Expr *left = parse_primary_expr();
+    Expr *left = parse_call_member_expr();
     while (at().value == "/" || at().value == "*" || at().value == "%")
     {
         std::string op = eat().value;
-        Expr *right = parse_primary_expr();
+        Expr *right = parse_call_member_expr();
         left = new BinaryExpr(left, right, op);
     }
 
     return left;
+}
+
+Expr *Parser::parse_call_member_expr()
+{
+    Expr *member = parse_member_expr();
+
+    if (at().type == TokenType::OpenParen)
+    {
+        return parse_call_expr(member);
+    }
+
+    return member;
+}
+
+Expr *Parser::parse_call_expr(Expr *caller)
+{
+    Expr *call_expr = new CallExpr(caller, parse_args());
+
+    if (at().type == TokenType::OpenParen)
+    {
+        call_expr = parse_call_expr(call_expr);
+    }
+
+    return call_expr;
+}
+
+std::vector<Expr *> Parser::parse_args()
+{
+    expect(TokenType::OpenParen, "Expected open parenthesis following function call.");
+
+    std::vector<Expr *> args = (at().type == TokenType::CloseParen) ? std::vector<Expr *>() : parse_arguments_list();
+
+    expect(TokenType::CloseParen, "Expected closing parenthesis following function call.");
+
+    return args;
+}
+
+std::vector<Expr *> Parser::parse_arguments_list()
+{
+    std::vector<Expr *> args = {parse_assignment_expr()};
+
+    while (at().type == TokenType::Comma)
+    {
+        eat();
+        args.push_back(parse_assignment_expr());
+    }
+
+    return args;
+}
+
+Expr *Parser::parse_member_expr()
+{
+    Expr *object = parse_primary_expr();
+
+    while (at().type == TokenType::Dot || at().type == TokenType::OpenBracket)
+    {
+        Token op = eat();
+        Expr *property;
+        bool computed;
+
+        if (op.type == TokenType::Dot)
+        {
+            computed = false;
+            property = parse_primary_expr();
+
+            if (property->kind != NodeType::Identifier)
+            {
+                throw std::runtime_error("Expected identifier following dot operator.");
+            }
+        }
+        else
+        {
+            computed = true;
+            property = parse_expr();
+            expect(TokenType::CloseBracket, "Expected closing bracket following computed property.");
+        }
+
+        object = new MemberExpr{object, property, computed};
+    }
+
+    return object;
 }
 
 Expr *Parser::parse_primary_expr()

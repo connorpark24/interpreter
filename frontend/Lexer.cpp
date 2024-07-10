@@ -47,13 +47,21 @@ std::deque<Token> tokenize(const std::string sourceCode)
         {
             tokens.push_back(token(TokenType::CloseParen, ")"));
         }
-        if (currToken == '{')
+        else if (currToken == '{')
         {
             tokens.push_back(token(TokenType::OpenBrace, "{"));
         }
         else if (currToken == '}')
         {
             tokens.push_back(token(TokenType::CloseBrace, "}"));
+        }
+        else if (currToken == '[')
+        {
+            tokens.push_back(token(TokenType::OpenBracket, "["));
+        }
+        else if (currToken == ']')
+        {
+            tokens.push_back(token(TokenType::CloseBracket, "]"));
         }
         else if (
             currToken == '+' ||
@@ -79,6 +87,10 @@ std::deque<Token> tokenize(const std::string sourceCode)
         else if (currToken == ';')
         {
             tokens.push_back(token(TokenType::Semicolon, ";"));
+        }
+        else if (currToken == '.')
+        {
+            tokens.push_back(token(TokenType::Dot, "."));
         }
         else if (isInt(currToken))
         {

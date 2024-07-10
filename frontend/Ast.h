@@ -12,6 +12,8 @@ enum class NodeType
 
     // Expressions
     AssignmentExpr,
+    MemberExpr,
+    CallExpr,
 
     // Literals
     Property,
@@ -54,6 +56,31 @@ struct BinaryExpr : Expr
         : left(left), right(right), op(op)
     {
         this->kind = NodeType::BinaryExpr;
+    }
+};
+
+struct CallExpr : Expr
+{
+    Expr *caller;
+    std::vector<Expr *> args;
+
+    CallExpr(Expr *caller, std::vector<Expr *> args)
+        : caller(caller), args(args)
+    {
+        this->kind = NodeType::CallExpr;
+    }
+};
+
+struct MemberExpr : Expr
+{
+    Expr *object;
+    Expr *property;
+    bool computed;
+
+    MemberExpr(Expr *object, Expr *property, bool computed)
+        : object(object), property(property), computed(computed)
+    {
+        this->kind = NodeType::MemberExpr;
     }
 };
 

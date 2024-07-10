@@ -26,6 +26,11 @@ private:
     Expr *parse_expr();
     Expr *parse_additive_expr();
     Expr *parse_multiplicative_expr();
+    Expr *parse_call_member_expr();
+    Expr *parse_call_expr(Expr *caller);
+    std::vector<Expr *> parse_args();
+    std::vector<Expr *> parse_arguments_list();
+    Expr *parse_member_expr();
     Expr *parse_primary_expr();
 
 public:

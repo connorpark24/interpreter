@@ -19,9 +19,12 @@ enum class TokenType
     CloseParen,
     OpenBrace,
     CloseBrace,
+    OpenBracket,
+    CloseBracket,
     BinaryOperator,
     Semicolon,
     Comma,
+    Dot,
     Colon,
 
     // Keywords
