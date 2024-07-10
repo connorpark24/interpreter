@@ -9,6 +9,7 @@ enum class NodeType
     // Statements
     Program,
     VarDeclaration,
+    FunctionDeclaration,
 
     // Expressions
     AssignmentExpr,
@@ -21,7 +22,6 @@ enum class NodeType
     NumericLiteral,
     Identifier,
     BinaryExpr,
-    FunctionDeclaration
 };
 
 struct Stmt
@@ -148,6 +148,19 @@ struct VarDeclaration : Stmt
         : constant(constant), identifier(identifier), value(value)
     {
         kind = NodeType::VarDeclaration;
+    }
+};
+
+struct FunctionDeclaration : Stmt
+{
+    std::vector<Stmt *> body;
+    std::string name;
+    std::vector<std::string> parameters;
+
+    FunctionDeclaration(std::vector<Stmt *> body, const std::string &name, std::vector<std::string> parameters)
+        : body(body), name(name), parameters(parameters)
+    {
+        kind = NodeType::FunctionDeclaration;
     }
 };
 

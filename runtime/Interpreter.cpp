@@ -98,14 +98,41 @@ RuntimeVal *eval_call_expr(CallExpr *expr, Environment *env)
 
     RuntimeVal *fn = evaluate(expr->caller, env);
 
-    if (fn->type != ValueType::NativeFn)
+    if (fn->type == ValueType::NativeFn)
+
     {
-        throw std::runtime_error("Attempted to call a non-function");
+        RuntimeVal *result = (static_cast<NativeFunctionVal *>(fn))->call(args, env);
+        return result;
     }
 
-    RuntimeVal *result = (static_cast<NativeFunctionVal *>(fn))->call(args, env);
+    if (fn->type == ValueType::Function)
+    {
+        FunctionVal *function = static_cast<FunctionVal *>(fn);
+        Environment *scope = new Environment(function->declarationEnv);
 
-    return result;
+        for (size_t i = 0; i < function->parameters.size(); i++)
+        {
+            scope->declareVar(function->parameters[i], args[i], false);
+        }
+
+        RuntimeVal *result;
+
+        for (Stmt *stmt : function->body)
+        {
+            result = evaluate(stmt, scope);
+        }
+
+        return result;
+    }
+
+    throw std::runtime_error("Attempted to call a non-function");
+}
+
+RuntimeVal *eval_function_declaration(FunctionDeclaration *declaration, Environment *env)
+{
+    FunctionVal *function = new FunctionVal(declaration->body, declaration->name, declaration->parameters, env);
+
+    return env->declareVar(declaration->name, function, true);
 }
 
 RuntimeVal *evaluate(Stmt *astNode, Environment *env)
@@ -131,6 +158,8 @@ RuntimeVal *evaluate(Stmt *astNode, Environment *env)
         return eval_program(static_cast<Program *>(astNode), env);
     case NodeType::VarDeclaration:
         return eval_var_declaration(static_cast<VarDeclaration *>(astNode), env);
+    case NodeType::FunctionDeclaration:
+        return eval_function_declaration(static_cast<FunctionDeclaration *>(astNode), env);
     default:
         std::cerr << "Unknown AST Node\n";
         exit(1);

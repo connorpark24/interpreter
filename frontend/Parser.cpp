@@ -51,9 +51,44 @@ Stmt *Parser::parse_stmt()
 
     case TokenType::Const:
         return parse_var_declaration();
+    case TokenType::Fn:
+        return parse_fn_declaration();
     default:
         return parse_expr();
     }
+}
+
+Stmt *Parser::parse_fn_declaration()
+{
+    eat(); // fn
+
+    std::string name = expect(TokenType::Identifier, "Expected identifier name following fn keyword. ").value;
+
+    std::vector<Expr *> args = parse_args();
+    std::vector<std::string> params;
+
+    for (Expr *arg : args)
+    {
+        if (arg->kind != NodeType::Identifier)
+        {
+            throw std::runtime_error("Expected identifier name in function declaration.");
+        }
+
+        params.push_back(static_cast<Identifier *>(arg)->symbol);
+    }
+
+    expect(TokenType::OpenBrace, "Expected opening brace following function declaration.");
+
+    std::vector<Stmt *> body;
+
+    while (at().type != TokenType::CloseBrace && at().type != TokenType::EndOfFile)
+    {
+        body.push_back(parse_stmt());
+    }
+
+    expect(TokenType::CloseBrace, "Expected closing brace following function declaration.");
+
+    return new FunctionDeclaration{body, name, params};
 }
 
 Stmt *Parser::parse_var_declaration()

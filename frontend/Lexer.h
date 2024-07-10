@@ -30,6 +30,7 @@ enum class TokenType
     // Keywords
     Let,
     Const,
+    Fn,
 
     // Signal end of file
     EndOfFile,

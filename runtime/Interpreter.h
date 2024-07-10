@@ -13,5 +13,7 @@ RuntimeVal *eval_identifier(Identifier *ident, Environment *env);
 RuntimeVal *eval_assignment(AssignmentExpr *node, Environment *env);
 RuntimeVal *eval_object_expr(ObjectLiteral *obj, Environment *env);
 RuntimeVal *eval_call_expr(CallExpr *obj, Environment *env);
+RuntimeVal *eval_var_declaration(VarDeclaration *declaration, Environment *env);
+RuntimeVal *eval_function_declaration(FunctionDeclaration *declaration, Environment *env);
 
 #endif // INTERPRETER_H

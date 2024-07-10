@@ -17,6 +17,7 @@ enum class ValueType
     Boolean,
     Object,
     NativeFn,
+    Function,
     String
 };
 
@@ -126,6 +127,25 @@ struct NativeFunctionVal : RuntimeVal
     std::string toString() const override
     {
         return "<native function>";
+    }
+};
+
+struct FunctionVal : RuntimeVal
+{
+    std::vector<Stmt *> body;
+    std::string name;
+    std::vector<std::string> parameters;
+    Environment *declarationEnv;
+
+    FunctionVal(std::vector<Stmt *> body, const std::string &name, std::vector<std::string> parameters, Environment *env)
+        : body(body), name(name), parameters(parameters), declarationEnv(env)
+    {
+        type = ValueType::Function;
+    }
+
+    std::string toString() const override
+    {
+        return "<function " + name + ">";
     }
 };
 
