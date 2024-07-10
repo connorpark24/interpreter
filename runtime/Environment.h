@@ -1,11 +1,12 @@
 #ifndef ENVIRONMENT_H
 #define ENVIRONMENT_H
 
-#include "Values.h"
 #include <unordered_map>
 #include <unordered_set>
 #include <string>
 #include <stdexcept>
+
+struct RuntimeVal;
 
 class Environment
 {

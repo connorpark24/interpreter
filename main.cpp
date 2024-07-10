@@ -20,17 +20,5 @@ int main()
 
     RuntimeVal *result = evaluate(program, &env);
 
-    switch (result->type)
-    {
-    case ValueType::Null:
-        std::cout << "null";
-        break;
-    case ValueType::Number:
-        std::cout << static_cast<NumberVal *>(result)->value;
-        break;
-    default:
-        std::cout << "unknown";
-    }
-
     std::cout << "\n";
 }

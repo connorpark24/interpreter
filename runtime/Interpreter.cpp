@@ -3,6 +3,7 @@
 #include "Interpreter.h"
 
 #include <iostream>
+#include <algorithm>
 
 RuntimeVal *eval_program(Program *program, Environment *env)
 {
@@ -88,6 +89,25 @@ RuntimeVal *eval_object_expr(ObjectLiteral *obj, Environment *env)
     return object;
 }
 
+RuntimeVal *eval_call_expr(CallExpr *expr, Environment *env)
+{
+    std::vector<RuntimeVal *> args(expr->args.size());
+
+    std::transform(expr->args.begin(), expr->args.end(), args.begin(), [env](Expr *arg)
+                   { return evaluate(arg, env); });
+
+    RuntimeVal *fn = evaluate(expr->caller, env);
+
+    if (fn->type != ValueType::NativeFn)
+    {
+        throw std::runtime_error("Attempted to call a non-function");
+    }
+
+    RuntimeVal *result = (static_cast<NativeFunctionVal *>(fn))->call(args, env);
+
+    return result;
+}
+
 RuntimeVal *evaluate(Stmt *astNode, Environment *env)
 {
     switch (astNode->kind)
@@ -105,6 +125,8 @@ RuntimeVal *evaluate(Stmt *astNode, Environment *env)
         return eval_assignment(static_cast<AssignmentExpr *>(astNode), env);
     case NodeType::BinaryExpr:
         return eval_binary_expr(static_cast<BinaryExpr *>(astNode), env);
+    case NodeType::CallExpr:
+        return eval_call_expr(static_cast<CallExpr *>(astNode), env);
     case NodeType::Program:
         return eval_program(static_cast<Program *>(astNode), env);
     case NodeType::VarDeclaration:
