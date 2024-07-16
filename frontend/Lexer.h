@@ -6,7 +6,6 @@
 #include <vector>
 #include <deque>
 
-// Define the TokenType enum
 enum class TokenType
 {
     // Literal Types
@@ -15,13 +14,15 @@ enum class TokenType
 
     // Operators
     Equals,
+    BinaryOperator,
+
+    // Delimiters
     OpenParen,
     CloseParen,
     OpenBrace,
     CloseBrace,
     OpenBracket,
     CloseBracket,
-    BinaryOperator,
     Semicolon,
     Comma,
     Dot,
@@ -31,9 +32,13 @@ enum class TokenType
     Let,
     Const,
     Fn,
+    If,
+    Else,
+    For,
+    While,
 
     // Signal end of file
-    EndOfFile,
+    EndOfFile
 };
 
 // Define the Token struct

@@ -10,6 +10,9 @@ enum class NodeType
     Program,
     VarDeclaration,
     FunctionDeclaration,
+    IfStmt,
+    ForStmt,
+    WhileStmt,
 
     // Expressions
     AssignmentExpr,
@@ -22,6 +25,7 @@ enum class NodeType
     NumericLiteral,
     Identifier,
     BinaryExpr,
+
 };
 
 struct Stmt
@@ -161,6 +165,45 @@ struct FunctionDeclaration : Stmt
         : body(body), name(name), parameters(parameters)
     {
         kind = NodeType::FunctionDeclaration;
+    }
+};
+
+struct IfStmt : public Stmt
+{
+    Expr *condition;
+    Stmt *consequence;
+    Stmt *alternative;
+
+    IfStmt(Expr *condition, Stmt *consequence, Stmt *alternative = nullptr)
+        : condition(condition), consequence(consequence), alternative(alternative)
+    {
+        kind = NodeType::IfStmt;
+    }
+};
+
+struct ForStmt : public Stmt
+{
+    Stmt *initializer;
+    Expr *condition;
+    Expr *increment;
+    Stmt *body;
+
+    ForStmt(Stmt *initializer, Expr *condition, Expr *increment, Stmt *body)
+        : initializer(initializer), condition(condition), increment(increment), body(body)
+    {
+        kind = NodeType::ForStmt;
+    }
+};
+
+struct WhileStmt : public Stmt
+{
+    Expr *condition;
+    Stmt *body;
+
+    WhileStmt(Expr *condition, Stmt *body)
+        : condition(condition), body(body)
+    {
+        kind = NodeType::WhileStmt;
     }
 };
 

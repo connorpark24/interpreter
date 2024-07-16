@@ -8,7 +8,11 @@
 const std::map<std::string, TokenType> keywords = {
     {"let", TokenType::Let},
     {"const", TokenType::Const},
-    {"fn", TokenType::Fn}};
+    {"fn", TokenType::Fn},
+    {"if", TokenType::If},
+    {"else", TokenType::Else},
+    {"for", TokenType::For},
+    {"while", TokenType::While}};
 
 Token token(TokenType type, std::string value = "")
 {
