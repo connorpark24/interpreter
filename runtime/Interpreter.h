@@ -15,5 +15,8 @@ RuntimeVal *eval_object_expr(ObjectLiteral *obj, Environment *env);
 RuntimeVal *eval_call_expr(CallExpr *obj, Environment *env);
 RuntimeVal *eval_var_declaration(VarDeclaration *declaration, Environment *env);
 RuntimeVal *eval_function_declaration(FunctionDeclaration *declaration, Environment *env);
+RuntimeVal *eval_for_stmt(ForStmt *stmt, Environment *env);
+RuntimeVal *eval_while_stmt(WhileStmt *stmt, Environment *env);
+RuntimeVal *eval_if_stmt(IfStmt *stmt, Environment *env);
 
 #endif // INTERPRETER_H

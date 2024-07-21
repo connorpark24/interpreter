@@ -5,6 +5,40 @@
 #include <iostream>
 #include <algorithm>
 
+bool isTruthy(RuntimeVal *val)
+{
+    if (val->type == ValueType::Boolean)
+    {
+        return static_cast<BooleanVal *>(val)->value;
+    }
+    else if (val->type == ValueType::Null)
+    {
+        return false;
+    }
+    else if (val->type == ValueType::Number)
+    {
+        return static_cast<NumberVal *>(val)->value != 0;
+    }
+    else if (val->type == ValueType::String)
+    {
+        return !static_cast<StringVal *>(val)->value.empty();
+    }
+    else if (val->type == ValueType::Object)
+    {
+        return true;
+    }
+    else if (val->type == ValueType::NativeFn)
+    {
+        return true;
+    }
+    else if (val->type == ValueType::Function)
+    {
+        return true;
+    }
+
+    return false;
+}
+
 RuntimeVal *eval_program(Program *program, Environment *env)
 {
     RuntimeVal *lastEvaluated = new NullVal();

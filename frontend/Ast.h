@@ -168,34 +168,21 @@ struct FunctionDeclaration : Stmt
     }
 };
 
-struct IfStmt : public Stmt
+struct ForStmt : Stmt
 {
-    Expr *condition;
-    Stmt *consequence;
-    Stmt *alternative;
-
-    IfStmt(Expr *condition, Stmt *consequence, Stmt *alternative = nullptr)
-        : condition(condition), consequence(consequence), alternative(alternative)
-    {
-        kind = NodeType::IfStmt;
-    }
-};
-
-struct ForStmt : public Stmt
-{
-    Stmt *initializer;
+    Stmt *init;
     Expr *condition;
     Expr *increment;
     Stmt *body;
 
-    ForStmt(Stmt *initializer, Expr *condition, Expr *increment, Stmt *body)
-        : initializer(initializer), condition(condition), increment(increment), body(body)
+    ForStmt(Stmt *init, Expr *condition, Expr *increment, Stmt *body)
+        : init(init), condition(condition), increment(increment), body(body)
     {
         kind = NodeType::ForStmt;
     }
 };
 
-struct WhileStmt : public Stmt
+struct WhileStmt : Stmt
 {
     Expr *condition;
     Stmt *body;
@@ -204,6 +191,19 @@ struct WhileStmt : public Stmt
         : condition(condition), body(body)
     {
         kind = NodeType::WhileStmt;
+    }
+};
+
+struct IfStmt : Stmt
+{
+    Expr *condition;
+    Stmt *thenBranch;
+    Stmt *elseBranch;
+
+    IfStmt(Expr *condition, Stmt *thenBranch, Stmt *elseBranch = nullptr)
+        : condition(condition), thenBranch(thenBranch), elseBranch(elseBranch)
+    {
+        kind = NodeType::IfStmt;
     }
 };
 

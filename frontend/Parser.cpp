@@ -53,6 +53,12 @@ Stmt *Parser::parse_stmt()
         return parse_var_declaration();
     case TokenType::Fn:
         return parse_fn_declaration();
+    case TokenType::For:
+        return parse_for_stmt();
+    case TokenType::While:
+        return parse_while_stmt();
+    case TokenType::If:
+        return parse_if_stmt();
     default:
         return parse_expr();
     }
@@ -114,6 +120,63 @@ Stmt *Parser::parse_var_declaration()
     expect(TokenType::Semicolon, "Expected semicolon following variable declaration.");
 
     return declaration;
+}
+
+Stmt *Parser::parse_for_stmt()
+{
+    eat(); // for
+
+    expect(TokenType::OpenParen, "Expected '(' after 'for'.");
+
+    Stmt *init = nullptr;
+    if (at().type != TokenType::Semicolon)
+    {
+        init = parse_var_declaration();
+    }
+    expect(TokenType::Semicolon, "Expected ';' after initialization.");
+
+    Expr *condition = parse_expr();
+    expect(TokenType::Semicolon, "Expected ';' after condition.");
+
+    Expr *increment = parse_expr();
+    expect(TokenType::CloseParen, "Expected ')' after increment.");
+
+    Stmt *body = parse_stmt();
+
+    return new ForStmt(init, condition, increment, body);
+}
+
+Stmt *Parser::parse_while_stmt()
+{
+    eat(); // while
+
+    expect(TokenType::OpenParen, "Expected '(' after 'while'.");
+    Expr *condition = parse_expr();
+    expect(TokenType::CloseParen, "Expected ')' after condition.");
+
+    Stmt *body = parse_stmt();
+
+    return new WhileStmt(condition, body);
+}
+
+Stmt *Parser::parse_if_stmt()
+{
+    eat(); // if
+
+    expect(TokenType::OpenParen, "Expected '(' after 'if'.");
+    Expr *condition = parse_expr();
+    expect(TokenType::CloseParen, "Expected ')' after condition.");
+
+    Stmt *thenBranch = parse_stmt();
+    Stmt *elseBranch = nullptr;
+
+    if (at().type == TokenType::Else)
+    {
+        eat(); // else
+        elseBranch = parse_stmt();
+    }
+
+    return new IfStmt(condition, thenBranch, elseBranch);
 }
 
 Expr *Parser::parse_expr()

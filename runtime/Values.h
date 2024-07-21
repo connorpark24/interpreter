@@ -1,13 +1,13 @@
 #ifndef VALUES_H
 #define VALUES_H
 
+#include "../frontend/Ast.h"
 #include <unordered_map>
 #include <string>
 #include <vector>
 #include <functional>
 #include <sstream>
 
-// Forward declaration of Environment to resolve circular dependency
 class Environment;
 
 enum class ValueType

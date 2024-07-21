@@ -22,6 +22,9 @@ private:
     Stmt *parse_stmt();
     Stmt *parse_var_declaration();
     Stmt *parse_fn_declaration();
+    Stmt *parse_for_stmt();
+    Stmt *parse_while_stmt();
+    Stmt *parse_if_stmt();
     Expr *parse_assignment_expr();
     Expr *parse_object_expr();
     Expr *parse_expr();
